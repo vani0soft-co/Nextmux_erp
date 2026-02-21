@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nextmux – Dossier de Conception</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.1/mermaid.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f0f0f;
+    --paper: #f7f4ef;
+    --accent: #c84b31;
+    --accent2: #2563a8;
+    --muted: #6b6860;
+    --border: #d9d4cc;
+    --card: #ffffff;
+    --code-bg: #1a1a2e;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.7;
+  }
+
+  /* Cover Page */
+  .cover {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px 10%;
+    background: var(--ink);
+    color: var(--paper);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: -200px; right: -200px;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    border: 120px solid var(--accent);
+    opacity: 0.15;
+  }
+
+  .cover::after {
+    content: '';
+    position: absolute;
+    bottom: -100px; left: 30%;
+    width: 400px; height: 400px;
+    border: 2px solid var(--paper);
+    opacity: 0.07;
+    transform: rotate(45deg);
+  }
+
+  .cover-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 32px;
+  }
+
+  .cover h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(3rem, 8vw, 7rem);
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+
+  .cover h1 span { color: var(--accent); font-style: italic; }
+
+  .cover-sub {
+    font-size: 1.25rem;
+    color: rgba(247,244,239,0.6);
+    max-width: 600px;
+    margin-bottom: 60px;
+  }
+
+  .cover-meta {
+    display: flex;
+    gap: 48px;
+    flex-wrap: wrap;
+  }
+
+  .meta-item label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(247,244,239,0.4);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .meta-item span { font-weight: 500; font-size: 0.95rem; }
+
+  /* TOC */
+  .toc {
+    padding: 80px 10%;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .toc h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem;
+    margin-bottom: 32px;
+  }
+
+  .toc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+  }
+
+  .toc-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--ink);
+    transition: all 0.2s;
+  }
+
+  .toc-item:hover { border-color: var(--accent); background: #fff8f7; }
+
+  .toc-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  /* Sections */
+  .section {
+    padding: 80px 10%;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section:nth-child(even) { background: var(--card); }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .section h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+    margin-bottom: 8px;
+  }
+
+  .section-intro {
+    color: var(--muted);
+    max-width: 700px;
+    margin-bottom: 48px;
+    font-size: 1.05rem;
+  }
+
+  /* Diagram container */
+  .diagram-box {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px;
+    overflow-x: auto;
+    margin-bottom: 32px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.04);
+  }
+
+  .diagram-box .mermaid {
+    display: flex;
+    justify-content: center;
+  }
+
+  /* Code blocks */
+  .code-block {
+    background: var(--code-bg);
+    color: #a8d8ea;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.82rem;
+    line-height: 1.8;
+    border-radius: 12px;
+    padding: 32px;
+    overflow-x: auto;
+    white-space: pre;
+    margin-bottom: 24px;
+  }
+
+  .code-block .kw { color: #f7768e; }
+  .code-block .tbl { color: #7dcfff; }
+  .code-block .cmt { color: #565f89; }
+  .code-block .str { color: #9ece6a; }
+
+  /* Info cards */
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+  }
+
+  .info-card {
+    padding: 24px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: white;
+  }
+
+  .info-card h4 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .info-card p { font-size: 0.875rem; color: var(--muted); }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .badge-red { background: #fef2f0; color: var(--accent); }
+  .badge-blue { background: #eff6ff; color: var(--accent2); }
+  .badge-green { background: #f0fdf4; color: #16a34a; }
+
+  /* Relational schema table */
+  .rel-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    margin-bottom: 20px;
+  }
+
+  .rel-table th {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 10px 16px;
+    text-align: left;
+    font-family: 'DM Mono', monospace;
+    font-weight: 500;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+  }
+
+  .rel-table td {
+    padding: 10px 16px;
+    border-top: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  .rel-table tr:hover td { background: #fafafa; }
+
+  .pk { color: var(--accent); font-weight: 600; font-family: 'DM Mono', monospace; font-size: 0.8rem; }
+  .fk { color: var(--accent2); font-family: 'DM Mono', monospace; font-size: 0.8rem; }
+  .field { font-family: 'DM Mono', monospace; font-size: 0.8rem; }
+  .type { color: var(--muted); font-size: 0.8rem; }
+
+  /* Print */
+  @media print {
+    .cover { page-break-after: always; min-height: auto; padding: 60px; }
+    .section { page-break-inside: avoid; }
+  }
+
+  .divider {
+    width: 48px; height: 3px;
+    background: var(--accent);
+    margin: 24px 0;
+    border-radius: 2px;
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-label">Dossier de Conception · Workshop Full-Stack</div>
+  <h1>Next<span>mux</span><br>Mini ERP</h1>
+  <p class="cover-sub">Gestion de Projets & Finance — Conception UML, Modélisation des données et Architecture technique</p>
+  <div class="cover-meta">
+    <div class="meta-item">
+      <label>Entreprise</label>
+      <span>Nextmux PME</span>
+    </div>
+    <div class="meta-item">
+      <label>Stack</label>
+      <span>PHP / MySQL / HTML CSS JS</span>
+    </div>
+    <div class="meta-item">
+      <label>Type</label>
+      <span>Application Web Interne</span>
+    </div>
+    <div class="meta-item">
+      <label>Version</label>
+      <span>1.0 — 2025</span>
+    </div>
+  </div>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <h2>Sommaire</h2>
+  <div class="toc-grid">
+    <a href="#usecase" class="toc-item">
+      <span class="toc-num">01</span>
+      <span>Diagramme de cas d'utilisation</span>
+    </a>
+    <a href="#classes" class="toc-item">
+      <span class="toc-num">02</span>
+      <span>Diagramme de classes</span>
+    </a>
+    <a href="#mcd" class="toc-item">
+      <span class="toc-num">03</span>
+      <span>MCD — Modèle Conceptuel</span>
+    </a>
+    <a href="#schema" class="toc-item">
+      <span class="toc-num">04</span>
+      <span>Schéma relationnel</span>
+    </a>
+    <a href="#rapport" class="toc-item">
+      <span class="toc-num">05</span>
+      <span>Rapport technique</span>
+    </a>
+  </div>
+</div>
+
+<!-- 01 - USE CASE -->
+<div id="usecase" class="section">
+  <div class="section-label">01 — Analyse fonctionnelle</div>
+  <h2>Diagramme de cas d'utilisation</h2>
+  <div class="divider"></div>
+  <p class="section-intro">Le système Nextmux ERP implique deux acteurs principaux : le <strong>Gestionnaire</strong> (accès complet) et le <strong>Comptable</strong> (accès financier limité). Le diagramme ci-dessous présente l'ensemble des interactions possibles.</p>
+
+  <div class="diagram-box">
+    <div class="mermaid">
+graph LR
+  style G fill:#c84b31,color:#fff,rx:50
+  style C fill:#2563a8,color:#fff,rx:50
+
+  G((Gestionnaire))
+  C((Comptable))
+
+  subgraph ERP["🖥️  Nextmux Mini ERP"]
+    direction TB
+
+    subgraph Clients["👥 Gestion Clients"]
+      UC1[Créer un client]
+      UC2[Modifier un client]
+      UC3[Supprimer un client]
+      UC4[Lister les clients]
+    end
+
+    subgraph Projets["📁 Gestion Projets"]
+      UC5[Créer un projet]
+      UC6[Modifier un projet]
+      UC7[Supprimer un projet]
+      UC8[Consulter un projet]
+    end
+
+    subgraph Taches["✅ Gestion Tâches"]
+      UC9[Créer une tâche]
+      UC10[Modifier une tâche]
+      UC11[Changer le statut]
+      UC12[Supprimer une tâche]
+    end
+
+    subgraph Finance["💰 Module Finance"]
+      UC13[Créer une facture]
+      UC14[Modifier une facture]
+      UC15[Enregistrer un paiement]
+      UC16[Enregistrer une dépense]
+      UC17[Tableau de bord financier]
+    end
+  end
+
+  G --> UC1 & UC2 & UC3 & UC4
+  G --> UC5 & UC6 & UC7 & UC8
+  G --> UC9 & UC10 & UC11 & UC12
+  G --> UC13 & UC14 & UC15 & UC16 & UC17
+  C --> UC13 & UC14 & UC15 & UC16 & UC17
+    </div>
+  </div>
+
+  <div class="info-grid">
+    <div class="info-card">
+      <h4><span class="badge badge-red">Gestionnaire</span></h4>
+      <p>Accès complet à tous les modules. Gère les clients, projets, tâches et la finance. Profil opérationnel principal de l'application.</p>
+    </div>
+    <div class="info-card">
+      <h4><span class="badge badge-blue">Comptable</span></h4>
+      <p>Accès restreint au module finance : création de factures, saisie des paiements et dépenses, consultation du tableau de bord.</p>
+    </div>
+    <div class="info-card">
+      <h4><span class="badge badge-green">Système</span></h4>
+      <p>Calculs automatiques : statut de facture (brouillon / envoyée / payée), solde financier, suivi du reste à payer par projet.</p>
+    </div>
+  </div>
+</div>
+
+<!-- 02 - CLASS DIAGRAM -->
+<div id="classes" class="section">
+  <div class="section-label">02 — Conception orientée objet</div>
+  <h2>Diagramme de classes</h2>
+  <div class="divider"></div>
+  <p class="section-intro">Le diagramme de classes présente les entités métier, leurs attributs, leurs méthodes et leurs relations. Il constitue le fondement de l'architecture logicielle.</p>
+
+  <div class="diagram-box">
+    <div class="mermaid">
+classDiagram
+  direction TB
+
+  class Client {
+    +int id
+    +string nom
+    +string email
+    +string telephone
+    +string adresse
+    +string ville
+    +date createdAt
+    +getProjets() Projet[]
+    +getFactures() Facture[]
+  }
+
+  class Projet {
+    +int id
+    +string titre
+    +string description
+    +float budget
+    +string statut
+    +date dateDebut
+    +date dateFin
+    +int clientId
+    +getTaches() Tache[]
+    +getFactures() Facture[]
+    +getMontantFacture() float
+    +getTauxAvancement() float
+  }
+
+  class Tache {
+    +int id
+    +string titre
+    +string description
+    +string statut
+    +string priorite
+    +date dateEcheance
+    +int projetId
+    +marquerTerminee() void
+    +estEnRetard() bool
+  }
+
+  class Facture {
+    +int id
+    +string numero
+    +float montantHT
+    +float tva
+    +float montantTTC
+    +string statut
+    +date dateEmission
+    +date dateEcheance
+    +int projetId
+    +getPaiements() Paiement[]
+    +getMontantPaye() float
+    +getReste() float
+    +calculerStatut() string
+  }
+
+  class Paiement {
+    +int id
+    +float montant
+    +date datePaiement
+    +string modePaiement
+    +string reference
+    +int factureId
+  }
+
+  class Depense {
+    +int id
+    +string libelle
+    +float montant
+    +string categorie
+    +date date
+    +string justificatif
+    +int projetId
+  }
+
+  Client "1" --> "0..*" Projet : possède
+  Projet "1" --> "0..*" Tache : contient
+  Projet "1" --> "0..*" Facture : génère
+  Projet "1" --> "0..*" Depense : engendre
+  Facture "1" --> "0..*" Paiement : reçoit
+    </div>
+  </div>
+</div>
+
+<!-- 03 - MCD -->
+<div id="mcd" class="section">
+  <div class="section-label">03 — Modélisation conceptuelle</div>
+  <h2>MCD — Modèle Conceptuel de Données</h2>
+  <div class="divider"></div>
+  <p class="section-intro">Le MCD présente les entités, leurs attributs et les associations entre elles avec leurs cardinalités, sans encore détailler l'implémentation relationnelle.</p>
+
+  <div class="diagram-box">
+    <div class="mermaid">
+erDiagram
+  CLIENT {
+    int id PK
+    string nom
+    string email
+    string telephone
+    string adresse
+    string ville
+  }
+
+  PROJET {
+    int id PK
+    string titre
+    string description
+    decimal budget
+    string statut
+    date dateDebut
+    date dateFin
+  }
+
+  TACHE {
+    int id PK
+    string titre
+    string description
+    string statut
+    string priorite
+    date dateEcheance
+  }
+
+  FACTURE {
+    int id PK
+    string numero
+    decimal montantHT
+    decimal tva
+    decimal montantTTC
+    string statut
+    date dateEmission
+    date dateEcheance
+  }
+
+  PAIEMENT {
+    int id PK
+    decimal montant
+    date datePaiement
+    string modePaiement
+    string reference
+  }
+
+  DEPENSE {
+    int id PK
+    string libelle
+    decimal montant
+    string categorie
+    date date
+    string justificatif
+  }
+
+  CLIENT ||--o{ PROJET : "passe commande"
+  PROJET ||--o{ TACHE : "se décompose en"
+  PROJET ||--o{ FACTURE : "est facturé par"
+  PROJET ||--o{ DEPENSE : "génère"
+  FACTURE ||--o{ PAIEMENT : "est réglée par"
+    </div>
+  </div>
+
+  <div class="info-grid">
+    <div class="info-card">
+      <h4>📐 Cardinalités clés</h4>
+      <p>Un CLIENT peut avoir 0 ou N projets. Un PROJET appartient à exactement 1 client. Une FACTURE ne concerne qu'1 projet mais un projet peut avoir plusieurs factures (facturation échelonnée).</p>
+    </div>
+    <div class="info-card">
+      <h4>🔗 Association DEPENSE</h4>
+      <p>Une dépense peut être rattachée à un projet (0,1) pour permettre le calcul de rentabilité par projet, ou rester une dépense générale de l'entreprise.</p>
+    </div>
+    <div class="info-card">
+      <h4>💡 Règle de gestion</h4>
+      <p>Le statut d'une FACTURE est calculé automatiquement : <em>brouillon → envoyée → partiellement payée → payée</em> selon les paiements enregistrés.</p>
+    </div>
+  </div>
+</div>
+
+<!-- 04 - RELATIONAL SCHEMA -->
+<div id="schema" class="section">
+  <div class="section-label">04 — Implémentation physique</div>
+  <h2>Schéma relationnel final</h2>
+  <div class="divider"></div>
+  <p class="section-intro">Le schéma relationnel est le passage du MCD vers la base de données MySQL. Les clés primaires (PK) et étrangères (FK) sont explicitement définies.</p>
+
+  <!-- clients -->
+  <h3 style="margin-bottom:12px; font-family:'DM Mono',monospace; font-size:0.9rem; color:var(--accent2);">▸ clients</h3>
+  <table class="rel-table">
+    <thead><tr><th>Colonne</th><th>Type</th><th>Contrainte</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="pk">id</td><td class="type">INT UNSIGNED</td><td><span class="badge badge-red">PK AUTO_INCREMENT</span></td><td>Identifiant unique</td></tr>
+      <tr><td class="field">nom</td><td class="type">VARCHAR(150)</td><td>NOT NULL</td><td>Raison sociale ou nom</td></tr>
+      <tr><td class="field">email</td><td class="type">VARCHAR(200)</td><td>NOT NULL UNIQUE</td><td>Email principal</td></tr>
+      <tr><td class="field">telephone</td><td class="type">VARCHAR(20)</td><td>NULL</td><td>Numéro de téléphone</td></tr>
+      <tr><td class="field">adresse</td><td class="type">TEXT</td><td>NULL</td><td>Adresse postale</td></tr>
+      <tr><td class="field">ville</td><td class="type">VARCHAR(100)</td><td>NULL</td><td>Ville</td></tr>
+      <tr><td class="field">created_at</td><td class="type">TIMESTAMP</td><td>DEFAULT NOW()</td><td>Date de création</td></tr>
+    </tbody>
+  </table>
+
+  <!-- projets -->
+  <h3 style="margin:24px 0 12px; font-family:'DM Mono',monospace; font-size:0.9rem; color:var(--accent2);">▸ projets</h3>
+  <table class="rel-table">
+    <thead><tr><th>Colonne</th><th>Type</th><th>Contrainte</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="pk">id</td><td class="type">INT UNSIGNED</td><td><span class="badge badge-red">PK AUTO_INCREMENT</span></td><td>Identifiant unique</td></tr>
+      <tr><td class="fk">client_id</td><td class="type">INT UNSIGNED</td><td><span class="badge badge-blue">FK → clients.id</span></td><td>Client associé</td></tr>
+      <tr><td class="field">titre</td><td class="type">VARCHAR(200)</td><td>NOT NULL</td><td>Nom du projet</td></tr>
+      <tr><td class="field">description</td><td class="type">TEXT</td><td>NULL</td><td>Description détaillée</td></tr>
+      <tr><td class="field">budget</td><td class="type">DECIMAL(12,2)</td><td>DEFAULT 0</td><td>Budget prévisionnel</td></tr>
+      <tr><td class="field">statut</td><td class="type">ENUM</td><td>'en_cours','termine','suspendu','prospect'</td><td>État du projet</td></tr>
+      <tr><td class="field">date_debut</td><td class="type">DATE</td><td>NULL</td><td>Date de démarrage</td></tr>
+      <tr><td class="field">date_fin</td><td class="type">DATE</td><td>NULL</td><td>Date de livraison prévue</td></tr>
+      <tr><td class="field">created_at</td><td class="type">TIMESTAMP</td><td>DEFAULT NOW()</td><td>Date de création</td></tr>
+    </tbody>
+  </table>
+
+  <!-- taches -->
+  <h3 style="margin:24px 0 12px; font-family:'DM Mono',monospace; font-size:0.9rem; color:var(--accent2);">▸ taches</h3>
+  <table class="rel-table">
+    <thead><tr><th>Colonne</th><th>Type</th><th>Contrainte</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="pk">id</td><td class="type">INT UNSIGNED</td><td><span class="badge badge-red">PK AUTO_INCREMENT</span></td><td></td></tr>
+      <tr><td class="fk">projet_id</td><td class="type">INT UNSIGNED</td><td><span class="badge badge-blue">FK → projets.id</span></td><td>Projet parent</td></tr>
+      <tr><td class="field">titre</td><td class="type">VARCHAR(200)</td><td>NOT NULL</td><td>Intitulé de la tâche</td></tr>
+      <tr><td class="field">description</td><td class="type">TEXT</td><td>NULL</td><td></td></tr>
+      <tr><td class="field">statut</td><td class="type">ENUM</td><td>'a_faire','en_cours','termine'</td><td>Avancement</td></tr>
+      <tr><td class="field">priorite</td><td class="type">ENUM</td><td>'basse','normale','haute','critique'</td><td>Niveau de priorité</td></tr>
+      <tr><td class="field">date_echeance</td><td class="type">DATE</td><td>NULL</td><td>Deadline</td></tr>
+      <tr><td class="field">created_at</td><td class="type">TIMESTAMP</td><td>DEFAULT NOW()</td><td></td></tr>
+    </tbody>
+  </table>
+
+  <!-- factures -->
+  <h3 style="margin:24px 0 12px; font-family:'DM Mono',monospace; font-size:0.9rem; color:var(--accent2);">▸ factures</h3>
+  <table class="rel-table">
+    <thead><tr><th>Colonne</th><th>Type</th><th>Contrainte</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="pk">id</td><td class="type">INT UNSIGNED</td><td><span class="badge badge-red">PK AUTO_INCREMENT</span></td><td></td></tr>
+      <tr><td class="fk">projet_id</td><td class="type">INT UNSIGNED</td><td><span class="badge badge-blue">FK → projets.id</span></td><td>Projet facturé</td></tr>
+      <tr><td class="field">numero</td><td class="type">VARCHAR(30)</td><td>NOT NULL UNIQUE</td><td>Ex: FAC-2025-001</td></tr>
+      <tr><td class="field">montant_ht</td><td class="type">DECIMAL(12,2)</td><td>NOT NULL</td><td>Montant hors taxes</td></tr>
+      <tr><td class="field">tva</td><td class="type">DECIMAL(5,2)</td><td>DEFAULT 20.00</td><td>Taux TVA en %</td></tr>
+      <tr><td class="field">montant_ttc</td><td class="type">DECIMAL(12,2)</td><td>NOT NULL</td><td>Calculé : HT × (1 + TVA/100)</td></tr>
+      <tr><td class="field">statut</td><td class="type">ENUM</td><td>'brouillon','envoyee','partiellement_payee','payee'</td><td></td></tr>
+      <tr><td class="field">date_emission</td><td class="type">DATE</td><td>NOT NULL</td><td></td></tr>
+      <tr><td class="field">date_echeance</td><td class="type">DATE</td><td>NULL</td><td></td></tr>
+      <tr><td class="field">notes</td><td class="type">TEXT</td><td>NULL</td><td>Mentions légales / commentaires</td></tr>
+      <tr><td class="field">created_at</td><td class="type">TIMESTAMP</td><td>DEFAULT NOW()</td><td></td></tr>
+    </tbody>
+  </table>
+
+  <!-- paiements -->
+  <h3 style="margin:24px 0 12px; font-family:'DM Mono',monospace; font-size:0.9rem; color:var(--accent2);">▸ paiements</h3>
+  <table class="rel-table">
+    <thead><tr><th>Colonne</th><th>Type</th><th>Contrainte</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="pk">id</td><td class="type">INT UNSIGNED</td><td><span class="badge badge-red">PK AUTO_INCREMENT</span></td><td></td></tr>
+      <tr><td class="fk">facture_id</td><td class="type">INT UNSIGNED</td><td><span class="badge badge-blue">FK → factures.id</span></td><td>Facture concernée</td></tr>
+      <tr><td class="field">montant</td><td class="type">DECIMAL(12,2)</td><td>NOT NULL</td><td>Montant encaissé</td></tr>
+      <tr><td class="field">date_paiement</td><td class="type">DATE</td><td>NOT NULL</td><td></td></tr>
+      <tr><td class="field">mode_paiement</td><td class="type">ENUM</td><td>'virement','cheque','especes','carte','autre'</td><td></td></tr>
+      <tr><td class="field">reference</td><td class="type">VARCHAR(100)</td><td>NULL</td><td>Référence bancaire</td></tr>
+      <tr><td class="field">created_at</td><td class="type">TIMESTAMP</td><td>DEFAULT NOW()</td><td></td></tr>
+    </tbody>
+  </table>
+
+  <!-- depenses -->
+  <h3 style="margin:24px 0 12px; font-family:'DM Mono',monospace; font-size:0.9rem; color:var(--accent2);">▸ depenses</h3>
+  <table class="rel-table">
+    <thead><tr><th>Colonne</th><th>Type</th><th>Contrainte</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="pk">id</td><td class="type">INT UNSIGNED</td><td><span class="badge badge-red">PK AUTO_INCREMENT</span></td><td></td></tr>
+      <tr><td class="fk">projet_id</td><td class="type">INT UNSIGNED</td><td><span class="badge badge-blue">FK → projets.id (nullable)</span></td><td>Projet lié (optionnel)</td></tr>
+      <tr><td class="field">libelle</td><td class="type">VARCHAR(200)</td><td>NOT NULL</td><td>Description de la dépense</td></tr>
+      <tr><td class="field">montant</td><td class="type">DECIMAL(12,2)</td><td>NOT NULL</td><td></td></tr>
+      <tr><td class="field">categorie</td><td class="type">ENUM</td><td>'materiel','logiciel','prestataire','transport','autre'</td><td></td></tr>
+      <tr><td class="field">date</td><td class="type">DATE</td><td>NOT NULL</td><td></td></tr>
+      <tr><td class="field">justificatif</td><td class="type">VARCHAR(255)</td><td>NULL</td><td>Chemin vers fichier joint</td></tr>
+      <tr><td class="field">created_at</td><td class="type">TIMESTAMP</td><td>DEFAULT NOW()</td><td></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 05 - RAPPORT -->
+<div id="rapport" class="section">
+  <div class="section-label">05 — Rapport technique</div>
+  <h2>Architecture & Choix techniques</h2>
+  <div class="divider"></div>
+
+  <div class="info-grid" style="margin-bottom:40px;">
+    <div class="info-card">
+      <h4>🏗️ Architecture MVC</h4>
+      <p>L'application suit un pattern MVC allégé. Les pages PHP jouent le rôle de contrôleurs. La couche <code>includes/db.php</code> centralise l'accès MySQL via PDO.</p>
+    </div>
+    <div class="info-card">
+      <h4>🔒 Sécurité</h4>
+      <p>PDO avec requêtes préparées pour prévenir l'injection SQL. Validation serveur sur chaque POST. Échappement HTML (<code>htmlspecialchars</code>) en sortie.</p>
+    </div>
+    <div class="info-card">
+      <h4>📊 Module Finance</h4>
+      <p>Calculs en SQL avec <code>SUM()</code> et <code>LEFT JOIN</code> pour agréger : total facturé, total encaissé, total dépenses, résultat net par période.</p>
+    </div>
+    <div class="info-card">
+      <h4>🎨 Interface</h4>
+      <p>HTML/CSS/JS vanilla. Composants réutilisables via <code>includes/header.php</code> et <code>footer.php</code>. Design system cohérent avec variables CSS.</p>
+    </div>
+    <div class="info-card">
+      <h4>📂 Structure</h4>
+      <p><code>includes/</code> DB + layout. Un fichier PHP par module (clients, projets, taches, factures, paiements, depenses). <code>assets/</code> pour CSS et JS.</p>
+    </div>
+    <div class="info-card">
+      <h4>🚀 Perspectives</h4>
+      <p>Export PDF des factures, authentification multi-rôle, notifications d'échéances, API REST + frontend React, application mobile.</p>
+    </div>
+  </div>
+
+  <p style="color:var(--muted); font-size:0.9rem; text-align:center; padding:24px 0; border-top:1px solid var(--border);">
+    Nextmux Mini ERP · Dossier de conception v1.0 · Workshop Full-Stack PHP/MySQL
+  </p>
+</div>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'default',
+    themeVariables: {
+      primaryColor: '#f7f4ef',
+      primaryTextColor: '#0f0f0f',
+      primaryBorderColor: '#d9d4cc',
+      lineColor: '#0f0f0f',
+      secondaryColor: '#eff6ff',
+      tertiaryColor: '#fef2f0',
+      fontSize: '14px'
+    },
+    flowchart: { curve: 'basis', padding: 20 },
+    classDiagram: { diagramPadding: 20 }
+  });
+</script>
+</body>
+</html>
