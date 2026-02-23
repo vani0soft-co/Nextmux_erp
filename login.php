@@ -127,13 +127,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     .login-logo {
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
       font-size: 1.8rem;
       font-weight: 700;
       letter-spacing: -0.5px;
-      margin-bottom: 6px;
     }
 
-    .login-logo span { color: var(--accent); }
+    .login-logo img {
+      height: 1.2em;
+      width: auto;
+      object-fit: contain;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    .login-logo .logo-text span { color: var(--accent); }
 
     .login-header p {
       font-size: 0.82rem;
@@ -286,7 +298,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   <div class="login-card">
     <div class="login-header">
-      <div class="login-logo">Next<span>mux</span></div>
+      <div class="login-logo">
+        <img src="img/logo_nextmux.png" alt="N">ext<span>mux</span>
+      </div>
       <p>Connectez-vous pour accéder à l'application</p>
     </div>
 

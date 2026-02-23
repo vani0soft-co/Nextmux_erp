@@ -92,6 +92,17 @@ $flash = getFlash();
       font-size: 1.2rem;
       font-weight: 700;
       letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .sidebar-brand .logo .logo-letter {
+      height: 1.15em;
+      width: auto;
+      display: inline-block;
+      vertical-align: middle;
+      object-fit: contain;
     }
 
     .sidebar-brand .logo span {
@@ -1272,7 +1283,7 @@ $flash = getFlash();
 
   <nav class="sidebar">
     <div class="sidebar-brand">
-      <div class="logo">Next<span>mux</span></div>
+      <div class="logo"><img src="img/logo_nextmux.png" alt="N" class="logo-letter">ext<span>mux</span></div>
     </div>
     <div class="sidebar-nav">
       <div class="nav-section">Vue d'ensemble</div>
